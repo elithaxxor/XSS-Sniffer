@@ -4,6 +4,16 @@ import base64
 import time
 import argparse
 
+"""
+# This script is a web security testing toolkit that includes functionalities for:
+# - Checking for XSS vulnerabilities
+# - Bypassing IP blocking using X-Forwarded-For header rotation
+# - Brute-forcing stay-logged-in cookies
+# - Enumerating valid usernames using timing analysis
+"""
+
+
+# TODO: Refactor codebase to OOP for framework. 
 def check_xss_vulnerability(url):
     """Check for missing HttpOnly and Secure flags in cookies"""
     response = requests.get(url)
@@ -109,6 +119,43 @@ def enumerate_usernames(url, login_endpoint, userlist):
         
         print(f"User: {user} - Time: {elapsed:.2f}s - Status: {response.status_code}")
 
+def console_menu():
+    """Display a console menu for user interaction"""
+    while True:
+        print("\nWeb Security Testing Toolkit")
+        print("1. Check for XSS vulnerabilities")
+        print("2. Bypass IP blocking")
+        print("3. Brute-force stay-logged-in cookie")
+        print("4. Enumerate valid usernames")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            url = input("Enter URL to check for XSS: ")
+            check_xss_vulnerability(url)
+        elif choice == '2':
+            url = input("Enter URL: ")
+            login = input("Enter login endpoint: ")
+            wordlist = input("Enter path to wordlist: ")
+            bypass_ip_block(url, login, wordlist)
+        elif choice == '3':
+            url = input("Enter URL: ")
+            cookie = input("Enter cookie name: ")
+            user = input("Enter username: ")
+            wordlist = input("Enter path to wordlist: ")
+            brute_force_stay_logged_in(url, cookie, user, wordlist)
+        elif choice == '4':
+            url = input("Enter URL: ")
+            login = input("Enter login endpoint: ")
+            userlist = input("Enter path to userlist: ")
+            enumerate_usernames(url, login, userlist)
+        elif choice == '5':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Web Security Testing Toolkit")
     subparsers = parser.add_subparsers(dest='command')
@@ -147,4 +194,4 @@ if __name__ == "__main__":
     elif args.command == 'enum':
         enumerate_usernames(args.url, args.login, args.wordlist)
     else:
-        parser.print_help()
+        console_menu()
